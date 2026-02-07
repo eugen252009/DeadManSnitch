@@ -60,9 +60,9 @@ func Heartbeat(d Sender, checker Checker) {
 				msg = "Error: Could not reach Host"
 			}
 			fails++
-			log.Printf("Something went wrong %s: new Delay %d\n", checker.GetUrl(), delay)
+			log.Printf("Something went wrong %s: tries %d\n", checker.GetUrl(), fails)
 			if fails >= ReportCount {
-				d.Send(fmt.Sprintf("%-10s\n%d tries\n%-10s\n%s", time.Now().Format(time.RFC3339), fails, checker.GetUrl(), msg))
+				d.Send(fmt.Sprintf("%-10s\n%-10.0d tries\n%-10s\n%s", time.Now().Format(time.RFC3339), fails, checker.GetUrl(), msg))
 			}
 			time.Sleep(time.Duration(BaseDelay+delay) * time.Minute)
 			delay = min((delay + delay), 60)
