@@ -7,17 +7,25 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
 
 var BaseDelay = 5
+var ReportCount int = 3
 
 type Sender interface {
 	Send(string) error
 }
 
 func main() {
+	count := os.Getenv("REPORTCOUNT")
+	if n, err := strconv.Atoi(count); err != nil {
+		log.Printf("%s is not a Number!", count)
+	} else {
+		ReportCount = n
+	}
 	hosts := strings.Split(os.Getenv("HOSTS"), ",")
 	if len(hosts) == 0 {
 		panic("No Hosts Found!\nSpecify Env HOSTS")
@@ -48,7 +56,7 @@ func Heartbeat(d Sender, checker Checker) {
 			fails++
 			delay = min((delay + delay), 60)
 			log.Printf("Something went wrong %s: new Delay %d\n", checker.GetUrl(), delay)
-			if fails >= 3 {
+			if fails >= ReportCount {
 				d.Send(fmt.Sprintf("%-10s\n%d tries\n%-10s\n%s", time.Now().Format(time.RFC3339), fails, checker.GetUrl(), err.Error()))
 			}
 			time.Sleep(time.Duration(BaseDelay+delay) * time.Minute)
