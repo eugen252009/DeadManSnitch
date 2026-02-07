@@ -1,0 +1,12 @@
+services:
+  snitch:
+    build: .
+    container_name: uptime-monitor
+    restart: always
+    env_file:
+      - .env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
