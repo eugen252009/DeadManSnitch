@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -52,14 +54,18 @@ func Heartbeat(d Sender, checker Checker) {
 	var fails int = 0
 	for {
 		err := checker.Check()
+		msg := err.Error()
 		if err != nil {
+			if errors.Is(err, context.DeadlineExceeded) {
+				msg = "Error: Could not reach Host"
+			}
 			fails++
-			delay = min((delay + delay), 60)
 			log.Printf("Something went wrong %s: new Delay %d\n", checker.GetUrl(), delay)
 			if fails >= ReportCount {
-				d.Send(fmt.Sprintf("%-10s\n%d tries\n%-10s\n%s", time.Now().Format(time.RFC3339), fails, checker.GetUrl(), err.Error()))
+				d.Send(fmt.Sprintf("%-10s\n%d tries\n%-10s\n%s", time.Now().Format(time.RFC3339), fails, checker.GetUrl(), msg))
 			}
 			time.Sleep(time.Duration(BaseDelay+delay) * time.Minute)
+			delay = min((delay + delay), 60)
 			continue
 		}
 		delay = 1
