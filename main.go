@@ -14,8 +14,10 @@ import (
 	"time"
 )
 
-var BaseDelay = 5
-var ReportCount int = 3
+var (
+	BaseDelay       = 5
+	ReportCount int = 3
+)
 
 type Sender interface {
 	Send(string) error
@@ -24,7 +26,7 @@ type Sender interface {
 func main() {
 	count := os.Getenv("REPORTCOUNT")
 	if n, err := strconv.Atoi(count); err != nil {
-		log.Printf("%s is not a Number!", count)
+		log.Printf("%s is not a Number!, using %d", count, ReportCount)
 	} else {
 		ReportCount = n
 	}
@@ -50,12 +52,12 @@ type Checker interface {
 }
 
 func Heartbeat(d Sender, checker Checker) {
-	var delay int = 1
-	var fails int = 0
+	delay := 1
+	fails := 0
 	for {
 		err := checker.Check()
-		msg := err.Error()
 		if err != nil {
+			msg := err.Error()
 			if errors.Is(err, context.DeadlineExceeded) {
 				msg = "Error: Could not reach Host"
 			}
@@ -94,6 +96,7 @@ func (t *TCP) Check() error {
 func (t *TCP) GetUrl() string {
 	return t.Url
 }
+
 func (h *HTTP) GetUrl() string {
 	return h.Url
 }
