@@ -26,7 +26,7 @@ type Sender interface {
 func main() {
 	count := os.Getenv("REPORTCOUNT")
 	if n, err := strconv.Atoi(count); err != nil {
-		log.Printf("%s is not a Number!, using %d", count, ReportCount)
+		log.Printf("REPORTCOUNT: %s is not a Number!, using %d", count, ReportCount)
 	} else {
 		ReportCount = n
 	}
@@ -58,10 +58,10 @@ func Heartbeat(d Sender, checker i.Checker) {
 				msg = "Error: Could not reach Host"
 			}
 			if fails >= ReportCount {
-				err := d.Send(fmt.Sprintf("%-10s\n%-10.0d tries\n%-10s\n%s", time.Now().Format(time.RFC3339), fails, checker.GetUrl(), msg))
+				err := d.Send(fmt.Sprintf("%-10s\n%-10.0d tries\n%-10s\n%s", time.Now().Format(time.RFC3339), fails, checker.GetURL(), msg))
 				if err != nil {
 					log.Printf("Webhook Error: %s\n", err)
-					log.Printf("Something went wrong %s: tries %d\n", checker.GetUrl(), fails)
+					log.Printf("Something went wrong %s: tries %d\n", checker.GetURL(), fails)
 				}
 			}
 			newDelay := delay + BaseDelay

@@ -11,5 +11,5 @@ type (
 
 type Checker interface {
 	Check() error
-	GetUrl() string
+	GetURL() string
 }

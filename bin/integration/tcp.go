@@ -1,5 +1,11 @@
 package integration
 
+import (
+	"fmt"
+	"net"
+	"time"
+)
+
 func (t *TCP) Check() error {
 	conn, err := net.DialTimeout("tcp", t.URL, 5*time.Second)
 	if err != nil {
@@ -9,6 +15,6 @@ func (t *TCP) Check() error {
 	return nil
 }
 
-func (t *TCP) GetUrl() string {
+func (t *TCP) GetURL() string {
 	return t.URL
 }

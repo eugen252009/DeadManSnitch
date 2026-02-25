@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func (h *HTTP) GetUrl() string {
+func (h *HTTP) GetURL() string {
 	return h.URL
 }
 
