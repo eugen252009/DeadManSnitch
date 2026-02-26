@@ -64,12 +64,12 @@ func Heartbeat(d Sender, checker i.Checker) {
 					log.Printf("Something went wrong %s: tries %d\n", checker.GetURL(), fails)
 				}
 			}
-			newDelay := delay + BaseDelay
-			delay = min(newDelay, 60)
-			time.Sleep(time.Duration(newDelay) * time.Minute)
+			delay = min(delay+BaseDelay, 60)
+			time.Sleep(time.Duration(delay) * time.Minute)
 			continue
 		}
-		delay = 0
+		fails = 0
+		delay = BaseDelay
 		time.Sleep(time.Duration(delay) * time.Minute)
 	}
 }
